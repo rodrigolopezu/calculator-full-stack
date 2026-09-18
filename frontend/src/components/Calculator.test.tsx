@@ -84,6 +84,33 @@ describe('<Calculator />', () => {
     expect(screen.getByText('√8 =')).toBeInTheDocument();
   });
 
+  it('discards a result with backspace instead of editing its digits', async () => {
+    calculateMock.mockResolvedValue({ operation: 'multiply', a: 5, b: 9, result: 45 });
+    const user = userEvent.setup();
+    render(<Calculator />);
+
+    await press(user, '5', 'Multiply', '9', 'Equals');
+    await waitFor(() => expect(display()).toHaveTextContent(/^45$/));
+
+    await press(user, 'Backspace');
+
+    expect(display()).toHaveTextContent(/^0$/);
+    expect(screen.queryByText('5 × 9 =')).not.toBeInTheDocument();
+  });
+
+  it('steps back over a pending operation once the operand is empty', async () => {
+    const user = userEvent.setup();
+    render(<Calculator />);
+
+    await press(user, '5', 'Multiply');
+    expect(screen.getByText('5 \u00d7')).toBeInTheDocument();
+
+    await press(user, 'Backspace');
+
+    expect(display()).toHaveTextContent(/^5$/);
+    expect(screen.queryByText('5 \u00d7')).not.toBeInTheDocument();
+  });
+
   it('disables the keypad while a request is in flight', async () => {
     let settle: (response: CalculationResponse) => void = () => {};
     calculateMock.mockImplementation(

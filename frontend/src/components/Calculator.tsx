@@ -110,6 +110,25 @@ export function Calculator() {
 
   function backspace() {
     setError(null);
+
+    // A result is not edited digit by digit: the first backspace discards it.
+    if (expression !== null) {
+      setDisplay('0');
+      setExpression(null);
+      setOverwrite(true);
+      return;
+    }
+
+    // With no operand being typed, step back over the pending operation
+    // instead, so "5 x" returns to "5".
+    if ((overwrite || display === '0') && pending !== null && accumulator !== null) {
+      setDisplay(formatResult(accumulator));
+      setAccumulator(null);
+      setPending(null);
+      setOverwrite(false);
+      return;
+    }
+
     setDisplay((current) => {
       const next = current.slice(0, -1);
       return next === '' || next === '-' ? '0' : next;
