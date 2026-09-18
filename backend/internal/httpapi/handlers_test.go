@@ -69,6 +69,7 @@ func TestCalculateErrors(t *testing.T) {
 		{"rejects an unknown operation", "modulo", `{"a":1,"b":2}`, http.StatusNotFound, "unsupported_operation"},
 		{"rejects division by zero", "divide", `{"a":1,"b":0}`, http.StatusUnprocessableEntity, "division_by_zero"},
 		{"rejects a negative square root", "sqrt", `{"a":-4}`, http.StatusUnprocessableEntity, "negative_root"},
+		{"rejects an overflowing result", "power", `{"a":10,"b":400}`, http.StatusUnprocessableEntity, "result_not_finite"},
 	}
 
 	for _, tt := range tests {
@@ -87,6 +88,19 @@ func TestCalculateErrors(t *testing.T) {
 				t.Errorf("code = %q, want %q", got.Error.Code, tt.wantCode)
 			}
 		})
+	}
+}
+
+func TestCORSPreflight(t *testing.T) {
+	req := httptest.NewRequest(http.MethodOptions, "/api/v1/calculate/add", nil)
+	rec := httptest.NewRecorder()
+	NewRouter("http://localhost:5173").ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusNoContent {
+		t.Fatalf("status = %d, want %d", rec.Code, http.StatusNoContent)
+	}
+	if got := rec.Header().Get("Access-Control-Allow-Origin"); got != "http://localhost:5173" {
+		t.Errorf("allowed origin = %q, want %q", got, "http://localhost:5173")
 	}
 }
 

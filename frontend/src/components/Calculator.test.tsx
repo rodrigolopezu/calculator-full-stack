@@ -111,6 +111,57 @@ describe('<Calculator />', () => {
     expect(screen.queryByText('5 \u00d7')).not.toBeInTheDocument();
   });
 
+  it('accepts input from the physical keyboard', async () => {
+    calculateMock.mockResolvedValue({ operation: 'add', a: 7, b: 5, result: 12 });
+    const user = userEvent.setup();
+    render(<Calculator />);
+
+    await user.keyboard('7+5{Enter}');
+
+    expect(calculateMock).toHaveBeenCalledWith('add', 7, 5);
+    await waitFor(() => expect(display()).toHaveTextContent(/^12$/));
+  });
+
+  it('clears everything with the Escape key', async () => {
+    const user = userEvent.setup();
+    render(<Calculator />);
+
+    await user.keyboard('123');
+    expect(display()).toHaveTextContent(/^123$/);
+
+    await user.keyboard('{Escape}');
+    expect(display()).toHaveTextContent(/^0$/);
+  });
+
+  it('builds decimals and toggles the sign', async () => {
+    const user = userEvent.setup();
+    render(<Calculator />);
+
+    await press(user, '1', 'Decimal point', '5', 'Toggle sign');
+
+    expect(display()).toHaveTextContent(/^-1\.5$/);
+  });
+
+  it('sends a percentage of the first operand', async () => {
+    calculateMock.mockResolvedValue({ operation: 'percentage', a: 200, b: 15, result: 30 });
+    const user = userEvent.setup();
+    render(<Calculator />);
+
+    await press(user, '2', '0', '0', 'Percentage', '1', '5', 'Equals');
+
+    expect(calculateMock).toHaveBeenCalledWith('percentage', 200, 15);
+    await waitFor(() => expect(display()).toHaveTextContent(/^30$/));
+  });
+
+  it('caps an operand at twelve digits', async () => {
+    const user = userEvent.setup();
+    render(<Calculator />);
+
+    await press(user, ...Array<string>(14).fill('9'));
+
+    expect(display()).toHaveTextContent(/^999999999999$/);
+  });
+
   it('disables the keypad while a request is in flight', async () => {
     let settle: (response: CalculationResponse) => void = () => {};
     calculateMock.mockImplementation(
