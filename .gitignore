@@ -1,0 +1,21 @@
+cat > .gitignore <<'EOF'
+# Go
+/backend/bin/
+coverage.out
+coverage.html
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Editores / OS
+.DS_Store
+.idea/
+.vscode/
+EOF
