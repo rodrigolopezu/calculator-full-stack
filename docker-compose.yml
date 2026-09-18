@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    container_name: calculator-backend
+    environment:
+      PORT: "8080"
+      # Only used if the API is called directly from a browser on another
+      # origin; through nginx the requests are same-origin.
+      ALLOWED_ORIGIN: "http://localhost:3000"
+    ports:
+      # Exposed so the API can be exercised with curl during review.
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: calculator-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
