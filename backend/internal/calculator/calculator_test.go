@@ -22,6 +22,14 @@ func TestApply(t *testing.T) {
 		{"multiplies by zero", Multiply, 3, 0, 0},
 		{"divides", Divide, 10, 4, 2.5},
 		{"divides negatives", Divide, -10, 4, -2.5},
+		{"raises to a power", Power, 2, 10, 1024},
+		{"raises to a negative power", Power, 2, -1, 0.5},
+		{"raises to the zeroth power", Power, 5, 0, 1},
+		{"takes a square root", SquareRoot, 9, 0, 3},
+		{"ignores the second operand on square root", SquareRoot, 16, 99, 4},
+		{"takes the square root of zero", SquareRoot, 0, 0, 0},
+		{"computes a percentage", Percentage, 200, 15, 30},
+		{"computes a percentage of zero", Percentage, 0, 15, 0},
 	}
 
 	for _, tt := range tests {
@@ -46,8 +54,10 @@ func TestApplyErrors(t *testing.T) {
 	}{
 		{"divides by zero", Divide, 1, 0, ErrDivisionByZero},
 		{"divides zero by zero", Divide, 0, 0, ErrDivisionByZero},
+		{"rejects a negative square root", SquareRoot, -4, 0, ErrNegativeRoot},
 		{"rejects unknown operation", Operation("modulo"), 1, 2, ErrUnsupportedOperation},
-		{"rejects overflow", Multiply, math.MaxFloat64, 10, ErrResultNotFinite},
+		{"rejects overflow on multiply", Multiply, math.MaxFloat64, 10, ErrResultNotFinite},
+		{"rejects overflow on power", Power, 10, 400, ErrResultNotFinite},
 	}
 
 	for _, tt := range tests {
