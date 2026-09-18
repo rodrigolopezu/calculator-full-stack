@@ -1,14 +1,42 @@
+/* Design tokens taken from the reference palette. Plain CSS: the project has
+   no styling dependencies. */
 :root {
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
+  --cream: #faf3e1;
+  --ink: #0c0809;
+  --purple-deep: #47228c;
+  --purple: #6b4ba3;
+  --orange: #e38933;
+  --sand: #d0c4a0;
+  --plum: #463652;
+  --grey-cool: #acb3b6;
+
+  --radius-card: 32px;
+  --radius-key: 18px;
+
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-height: 100vh;
   padding: 2rem 1rem;
+  /* Grid rather than flex: a flex item shrink-wraps to its content, which made
+     the calculator resize as digits were typed. */
+  display: grid;
+  align-content: center;
+  background: var(--cream);
 }
 
 main {
+  width: 100%;
   max-width: 420px;
   margin: 0 auto;
 }

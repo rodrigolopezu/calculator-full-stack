@@ -1,0 +1,128 @@
+.calculator {
+  width: 100%;
+  padding: 1.25rem;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-card);
+  box-shadow: 0 10px 0 -2px var(--sand), 0 14px 28px rgb(12 8 9 / 18%);
+}
+
+.calculator__screen {
+  /* Fixed height: the screen never changes size with its content. */
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem 1.25rem 1.25rem;
+  margin-bottom: 0.875rem;
+  background: var(--ink);
+  border-radius: 24px;
+}
+
+.calculator__pending {
+  margin: 0 0 0.375rem;
+  min-height: 1.25rem;
+  text-align: right;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--grey-cool);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calculator__display {
+  display: block;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--cream);
+  /* Operands are capped in length, so a single line always suffices. */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.calculator__error {
+  margin: 0 0 0.875rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--orange);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+}
+
+.calculator__keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.625rem;
+}
+
+.key {
+  /* Slightly wider than tall, so keys read as rounded squares, not pills. */
+  aspect-ratio: 1.25;
+  min-height: 52px;
+  font-family: inherit;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--sand);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-key);
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+.key--utility {
+  background: var(--plum);
+  color: var(--cream);
+}
+
+.key--operator {
+  background: var(--purple);
+  color: var(--cream);
+}
+
+.key--equals {
+  background: var(--orange);
+}
+
+.key--wide {
+  grid-column: span 3;
+  /* Spans three columns, so it keeps the height of a normal key. */
+  aspect-ratio: auto;
+}
+
+.key:hover:not(:disabled) {
+  filter: brightness(1.07);
+}
+
+.key:active:not(:disabled) {
+  transform: translateY(2px) scale(0.98);
+}
+
+.key:focus-visible {
+  outline: 3px solid var(--purple-deep);
+  outline-offset: 2px;
+}
+
+.key:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 380px) {
+  .calculator {
+    padding: 1rem;
+  }
+
+  .calculator__screen {
+    min-height: 110px;
+  }
+
+  .key {
+    min-height: 46px;
+    font-size: 1rem;
+  }
+}
